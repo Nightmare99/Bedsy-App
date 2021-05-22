@@ -3,9 +3,19 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { DataFetcherService } from './services/data-fetcher.service';
-import { MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { MenuComponent } from './components/menu/menu.component';
 import { MatDialog } from '@angular/material/dialog';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import TileLayer from 'ol/layer/Tile';
+import VectorLayer from 'ol/layer/Vector';
+import OSM from 'ol/source/OSM';
+import Vector from 'ol/source/Vector';
+import { useGeographic, fromLonLat, transform } from 'ol/proj';
+import { Feature } from 'ol';
+import Point from 'ol/geom/Point';
+import Style from 'ol/style/Style';
+import Icon from 'ol/style/Icon';
 
 @Component({
   selector: 'app-root',
@@ -36,15 +46,28 @@ export class AppComponent implements OnInit, AfterViewInit {
   O2BedsTotal: number = 0;
   ICUBedsTotal: number = 0;
   normalBedsTotal: number = 0;
-  @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow;
+  map: Map | undefined;
+  markerSource: Vector = new Vector();
+  markerStyle: Style = new Style({
+    image: new Icon(/** @type {olx.style.IconOptions} */ ({
+      anchor: [0.5, 1],
+      opacity: 0.75,
+      scale: [0.05, 0.05],
+      src: 'assets/marker.png'
+    }))
+  });
+
 
   constructor(private httpClient: HttpClient, private dataFetcher: DataFetcherService, public dialog: MatDialog) {
     //this.getUserLocation(httpClient);
-    //dataFetcher.fetchPoints();
+    useGeographic();
     dataFetcher.pointsEventData.subscribe((points) => {
       this.points = points;
+      this.removePoints();
+      this.points.forEach(point => {
+        this.addPoint(point.lon, point.lat);
+      });
     });
-    this.loadMap(httpClient);
   }
 
   ngOnInit() {
@@ -53,17 +76,30 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.openMenu();
+    this.loadMap();
   }
 
-  loadMap(httpClient: HttpClient) {
-    this.apiLoaded = httpClient.jsonp('https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY', 'callback')
-        .pipe(
-          map(() => true),
-          catchError(() => of(false)),
-        );
+  loadMap() {
+    this.map = new Map({
+      controls: [],
+      view: new View({
+        center: [78.6569, 11.1271],
+        zoom: 8,
+      }),
+      layers: [
+        new TileLayer({
+          source: new OSM(),
+        }),
+        new VectorLayer({
+          source: this.markerSource,
+          style: this.markerStyle,
+        })
+      ],
+      target: 'ol-map'
+    });
   }
 
-  openInfoWindow(marker: MapMarker, point: any): void {
+  openInfoWindow(point: any): void {
     this.hospitalName = point.name;
     this.mobile = point.mobile;
     this.landline = point.landline;
@@ -74,13 +110,29 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.ICUBedsTotal = point.icuBedsAlotted;
     this.normalBeds = point.normalBedsVacant;
     this.normalBedsTotal = point.normalBedsAlloted;
-    this.infoWindow.open(marker);
   }
 
   openMenu(): void {
     let dialogRef = this.dialog.open(MenuComponent, {
       height: '300px',
       width: '400px',
+    });
+  }
+
+  addPoint(lon: number, lat: number): void {
+    console.log('lon:', lon);
+    console.log('lat:', lat);
+    var marker = new Feature({
+      geometry: new Point(transform([lon, lat], 'EPSG:4326', 'EPSG:4326')),
+    });
+    this.markerSource.addFeature(marker);
+  }
+
+  removePoints(): void {
+    var features = this.markerSource.getFeatures();
+    console.log(features)
+    features.forEach((feature) => {
+      this.markerSource.removeFeature(feature);
     });
   }
 

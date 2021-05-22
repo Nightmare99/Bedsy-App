@@ -9,10 +9,8 @@ export function cleanData(items: any, O2: boolean, ICU: boolean, normal: boolean
                     name: item.Name,
                     landline: item.Landline,
                     mobile: item.MobileNumber,
-                    pos: {
-                        lat: item.Latitude,
-                        lng: item.Longitude
-                    },
+                    lat: item.Latitude,
+                    lon: item.Longitude,
                     oxygenBedsAllotted: item.CovidBedDetails.AllotedO2Beds,
                     oxygenBedsVacant: item.CovidBedDetails.VaccantO2Beds,
                     icuBedsAlotted: item.CovidBedDetails.AllotedICUBeds,
@@ -32,10 +30,8 @@ export function cleanData(items: any, O2: boolean, ICU: boolean, normal: boolean
                 name: item.Name,
                 landline: item.Landline,
                 mobile: item.MobileNumber,
-                pos: {
-                    lat: item.Latitude,
-                    lng: item.Longitude
-                },
+                lat: item.Latitude,
+                lon: item.Longitude,
                 oxygenBedsAllotted: item.CovidBedDetails.AllotedO2Beds,
                 oxygenBedsVacant: item.CovidBedDetails.VaccantO2Beds,
                 icuBedsAlotted: item.CovidBedDetails.AllotedICUBeds,
@@ -49,10 +45,8 @@ export function cleanData(items: any, O2: boolean, ICU: boolean, normal: boolean
                 name: item.Name,
                 landline: item.Landline,
                 mobile: item.MobileNumber,
-                pos: {
-                    lat: item.Latitude,
-                    lng: item.Longitude
-                },
+                lat: item.Latitude,
+                lon: item.Longitude,
                 oxygenBedsAllotted: item.CovidBedDetails.AllotedO2Beds,
                 oxygenBedsVacant: item.CovidBedDetails.VaccantO2Beds,
                 icuBedsAlotted: item.CovidBedDetails.AllotedICUBeds,
@@ -66,10 +60,8 @@ export function cleanData(items: any, O2: boolean, ICU: boolean, normal: boolean
                 name: item.Name,
                 landline: item.Landline,
                 mobile: item.MobileNumber,
-                pos: {
-                    lat: item.Latitude,
-                    lng: item.Longitude
-                },
+                lat: item.Latitude,
+                lon: item.Longitude,
                 oxygenBedsAllotted: item.CovidBedDetails.AllotedO2Beds,
                 oxygenBedsVacant: item.CovidBedDetails.VaccantO2Beds,
                 icuBedsAlotted: item.CovidBedDetails.AllotedICUBeds,

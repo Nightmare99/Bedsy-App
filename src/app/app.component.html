@@ -1,19 +1,4 @@
-<div class="map" *ngIf="apiLoaded | async">
-  <google-map class="map" height="100vh" width="100vw" [options]='options'>
-    <map-marker #marker="mapMarker" *ngFor="let point of points" [position]="point.pos" (mapClick)="openInfoWindow(marker, point)"></map-marker>
-    <map-info-window>
-      <h1>{{ hospitalName }}</h1>
-      <h2>Mobile: {{ mobile }}</h2>
-      <h2 *ngIf="landline.length > 0">Landline: {{ landline }}</h2>
-      <h3>
-        O2 beds: <span [ngStyle]="{'color': O2Beds>0? 'green' : 'red'}">{{ O2Beds }}</span><br/>
-        ICU beds: <span [ngStyle]="{'color': ICUBeds>0? 'green' : 'red'}">{{ ICUBeds }}</span><br/>
-        Normal beds: <span [ngStyle]="{'color': normalBeds>0? 'green' : 'red'}">{{ normalBeds }}</span><br/>
-      </h3>
-      <a mat-raised-button color="primary" href="{{ mapLink }}" target="_blank">Open in Google Maps</a>
-    </map-info-window>
-  </google-map>
-</div>
+<div id="ol-map" class="map"></div>
 <button mat-fab style="position: absolute; top: 1%; left: 1%; z-index: 1000;" (click)="openMenu()">
   <mat-icon>menu</mat-icon>
 </button>
