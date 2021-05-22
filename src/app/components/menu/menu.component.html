@@ -1,0 +1,19 @@
+<mat-card-title>Welcome to Bedsy</mat-card-title>
+<br/>
+<br/>
+<mat-card-subtitle>Choose your filters</mat-card-subtitle>
+<br/><br/>
+<mat-form-field appearance="fill">
+    <mat-label>Choose a district</mat-label>
+    <mat-select [(ngModel)]="district">
+      <mat-option *ngFor="let district of districts" value="{{district}}">{{ district }}</mat-option>
+    </mat-select>
+</mat-form-field>
+<br/>
+<mat-card-content>
+    <mat-checkbox class="filters" [(ngModel)]="O2">O2 Beds</mat-checkbox>
+    <mat-checkbox class="filters" [(ngModel)]="ICU">ICU Beds</mat-checkbox>
+    <mat-checkbox class="filters" [(ngModel)]="normal">Normal Beds</mat-checkbox>
+</mat-card-content>
+<br/><br/>
+<button mat-raised-button color="primary" (click)="applyFilters()">Find</button>
