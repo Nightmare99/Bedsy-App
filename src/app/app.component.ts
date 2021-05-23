@@ -101,6 +101,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             let name = feature.getProperties().name;
             let O2Color, ICUColor, normalColor;
             let O2Beds = this.infoMap?.get(name).oxygenBedsVacant,
+            mapLink = this.infoMap?.get(name).mapLink,
             ICUBeds = this.infoMap?.get(name).icuBedsVacant,
             normalBeds = this.infoMap?.get(name).normalBedsVacant;
             O2Color = (O2Beds > 0)? 'green' : 'red'; 
@@ -115,6 +116,20 @@ export class AppComponent implements OnInit, AfterViewInit {
                 ICU beds: <span style="color: ${ICUColor}">${ICUBeds}</span><br/>
                 Normal beds: <span style="color: ${normalColor}">${normalBeds}</span><br/>
               </h3>
+              <a style="
+                  padding: 0 6px 0 6px;
+                  float: right;
+                  min-width: 88px;
+                  border-radius: 3px;
+                  font-size: 14px;
+                  text-align: center;
+                  text-transform: uppercase;
+                  text-decoration:none;
+                  border: none;
+                  outline: none;" 
+                href="${mapLink}" target="_blank">
+                  Open in Google Maps
+              </a>
               `;
           });
           this.overlay.setPosition(coordinate);
