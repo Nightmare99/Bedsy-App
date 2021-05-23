@@ -1,18 +1,15 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DataFetcherService } from './services/data-fetcher.service';
 import { MenuComponent } from './components/menu/menu.component';
 import { MatDialog } from '@angular/material/dialog';
-import Map from 'ol/Map';
+import OpenLayersMap from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import OSM from 'ol/source/OSM';
 import Vector from 'ol/source/Vector';
-import { useGeographic, fromLonLat, transform } from 'ol/proj';
-import { Feature } from 'ol';
+import { useGeographic, transform } from 'ol/proj';
+import { Feature, Overlay } from 'ol';
 import Point from 'ol/geom/Point';
 import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
@@ -25,16 +22,10 @@ import Icon from 'ol/style/Icon';
 export class AppComponent implements OnInit, AfterViewInit {
   title = 'bedsy';
   myPos: any;
-  apiLoaded: any;
-  options: any = {
-    disableDefaultUI: true,
-    height: '700px',
-    center: {
-      lat: 11.1271,
-      lng: 78.6569
-    },
-    zoom: 8
-  };
+  @ViewChild('popup', {static: false}) container!: ElementRef;
+  @ViewChild('popupCloser', {static: false}) closer!: ElementRef;
+  @ViewChild('popupContent', {static: false}) content!: ElementRef;
+  overlay: Overlay = new Overlay({});
   points: Array<any> = [];
   hospitalName: String = '';
   mobile: String = '';
@@ -46,32 +37,34 @@ export class AppComponent implements OnInit, AfterViewInit {
   O2BedsTotal: number = 0;
   ICUBedsTotal: number = 0;
   normalBedsTotal: number = 0;
-  map: Map | undefined;
   markerSource: Vector = new Vector();
   markerStyle: Style = new Style({
     image: new Icon(/** @type {olx.style.IconOptions} */ ({
       anchor: [0.5, 1],
-      opacity: 0.75,
-      scale: [0.05, 0.05],
+      opacity: 1,
+      scale: [0.075, 0.075],
       src: 'assets/marker.png'
     }))
   });
+  map: OpenLayersMap = new OpenLayersMap({});
+  infoMap: Map<String, any> | undefined;
 
-
-  constructor(private httpClient: HttpClient, private dataFetcher: DataFetcherService, public dialog: MatDialog) {
+  constructor(private dataFetcher: DataFetcherService, public dialog: MatDialog) {
     //this.getUserLocation(httpClient);
     useGeographic();
     dataFetcher.pointsEventData.subscribe((points) => {
+      this.infoMap = new Map<String, any>();
       this.points = points;
       this.removePoints();
       this.points.forEach(point => {
-        this.addPoint(point.lon, point.lat);
+        this.infoMap?.set(point.name, point);
+        this.addPoint(point.lon, point.lat, point.name);
       });
     });
   }
 
   ngOnInit() {
-    console.log(this.options);
+    
   }
 
   ngAfterViewInit() {
@@ -80,11 +73,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   loadMap() {
-    this.map = new Map({
+    this.map = new OpenLayersMap({
       controls: [],
       view: new View({
         center: [78.6569, 11.1271],
-        zoom: 8,
+        zoom: 8.5,
       }),
       layers: [
         new TileLayer({
@@ -97,19 +90,49 @@ export class AppComponent implements OnInit, AfterViewInit {
       ],
       target: 'ol-map'
     });
-  }
-
-  openInfoWindow(point: any): void {
-    this.hospitalName = point.name;
-    this.mobile = point.mobile;
-    this.landline = point.landline;
-    this.mapLink = point.mapLink;
-    this.O2Beds = point.oxygenBedsVacant;
-    this.O2BedsTotal = point.oxygenBedsAllotted;
-    this.ICUBeds = point.icuBedsVacant;
-    this.ICUBedsTotal = point.icuBedsAlotted;
-    this.normalBeds = point.normalBedsVacant;
-    this.normalBedsTotal = point.normalBedsAlloted;
+    this.overlay = new Overlay({
+      element: this.container.nativeElement,
+      autoPan: true,
+      autoPanAnimation: {
+          duration: 250
+      }
+    });
+    this.map.addOverlay(this.overlay);
+    this.closer.nativeElement.onclick = () => {
+      this.overlay.setPosition(undefined);
+      this.closer.nativeElement.blur();
+      return false;
+    };
+    this.map.on('singleclick',  (event) => {
+      if (this.map.hasFeatureAtPixel(event.pixel) === true) {
+          var coordinate = event.coordinate;
+          this.map.forEachFeatureAtPixel(event.pixel,  (feature, layer) => {
+            console.log(feature.getProperties());
+            let name = feature.getProperties().name;
+            let O2Color, ICUColor, normalColor;
+            let O2Beds = this.infoMap?.get(name).oxygenBedsVacant,
+            ICUBeds = this.infoMap?.get(name).icuBedsVacant,
+            normalBeds = this.infoMap?.get(name).normalBedsVacant;
+            O2Color = (O2Beds > 0)? 'green' : 'red'; 
+            ICUColor = (ICUBeds > 0)? 'green' : 'red'; 
+            normalColor = (normalBeds > 0)? 'green' : 'red'; 
+            this.content.nativeElement.innerHTML = `
+              <h1>${name}</h1>
+              <br/>
+              <h2>📲: ${this.infoMap?.get(name).mobile}<h2/>
+              <h3>
+                O2 beds: <span style="color: ${O2Color}">${O2Beds}</span><br/>
+                ICU beds: <span style="color: ${ICUColor}">${ICUBeds}</span><br/>
+                Normal beds: <span style="color: ${normalColor}">${normalBeds}</span><br/>
+              </h3>
+              `;
+          });
+          this.overlay.setPosition(coordinate);
+      } else {
+          this.overlay.setPosition(undefined);
+          this.closer.nativeElement.blur();
+      }
+  });
   }
 
   openMenu(): void {
@@ -119,11 +142,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addPoint(lon: number, lat: number): void {
-    console.log('lon:', lon);
-    console.log('lat:', lat);
+  addPoint(lon: number, lat: number, name: String): void {
     var marker = new Feature({
       geometry: new Point(transform([lon, lat], 'EPSG:4326', 'EPSG:4326')),
+      name: name
     });
     this.markerSource.addFeature(marker);
   }
