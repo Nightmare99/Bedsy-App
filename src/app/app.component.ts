@@ -27,16 +27,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('popupContent', {static: false}) content!: ElementRef;
   overlay: Overlay = new Overlay({});
   points: Array<any> = [];
-  hospitalName: String = '';
-  mobile: String = '';
-  landline: String = '';
-  mapLink: String = '';
-  O2Beds: number = 0;
-  ICUBeds: number = 0;
-  normalBeds: number = 0;
-  O2BedsTotal: number = 0;
-  ICUBedsTotal: number = 0;
-  normalBedsTotal: number = 0;
   markerSource: Vector = new Vector();
   markerStyle: Style = new Style({
     image: new Icon(/** @type {olx.style.IconOptions} */ ({
