@@ -1,0 +1,12 @@
+<mat-card  style="margin: 1%;">
+    <h2>{{ item.name }}</h2>
+    <mat-card-subtitle>📲: {{ item.mobile }}</mat-card-subtitle>
+    <mat-card-content>
+        O2 beds: <span [ngStyle]="{'color': item.oxygenBedsVacant>0? 'green' : 'red'}">{{ item.oxygenBedsVacant }}</span><br/>
+        ICU beds: <span [ngStyle]="{'color': item.icuBedsVacant>0? 'green' : 'red'}">{{ item.icuBedsVacant }}</span><br/>
+        Normal beds: <span [ngStyle]="{'color': item.normalBedsVacant>0? 'green' : 'red'}">{{ item.normalBedsVacant }}</span><br/>
+    </mat-card-content>
+    <mat-card-actions>
+        <a mat-button color="accent" style="text-decoration: none;" href="{{ item.mapLink }}" target="_blank">Open in Google Maps</a>
+    </mat-card-actions>
+</mat-card>

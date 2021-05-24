@@ -11,11 +11,15 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
+import { UnplottedComponent } from './components/unplotted/unplotted.component';
+import { UnplottedItemComponent } from './components/unplotted-item/unplotted-item.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MenuComponent
+    MenuComponent,
+    UnplottedComponent,
+    UnplottedItemComponent
   ],
   imports: [
     BrowserModule,

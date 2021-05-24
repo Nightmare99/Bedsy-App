@@ -6,3 +6,13 @@
 <button mat-fab style="position: absolute; top: 1%; left: 1%; z-index: 1000;" (click)="openMenu()">
   <mat-icon>menu</mat-icon>
 </button>
+<div *ngIf="noCoords.length > 0" style="position: absolute; bottom: 1.5%; right: 1%; z-index: 1000;">
+  <button mat-raised-button color="warn" (click)="openUnplotted()">
+    {{ noCoords.length }} unplotted results
+  </button>
+</div>
+<div style="position: absolute; bottom: 1.5%; left: 1%; z-index: 1000;">
+  <button mat-button disabled>
+    Made by <a style="text-decoration: none; color: grey;" href="https://nightmare99.github.io">Vishal Kumar</a>
+  </button>
+</div>

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DataFetcherService } from './services/data-fetcher.service';
 import { MenuComponent } from './components/menu/menu.component';
+import { UnplottedComponent } from './components/unplotted/unplotted.component';
 import { MatDialog } from '@angular/material/dialog';
 import OpenLayersMap from 'ol/Map';
 import View from 'ol/View';
@@ -38,13 +39,16 @@ export class AppComponent implements OnInit, AfterViewInit {
   });
   map: OpenLayersMap = new OpenLayersMap({});
   infoMap: Map<String, any> | undefined;
+  noCoords: Array<any> = [];
 
-  constructor(private dataFetcher: DataFetcherService, public dialog: MatDialog) {
+  constructor(private dataFetcher: DataFetcherService, public dialog: MatDialog, public unplottedDialog: MatDialog) {
     //this.getUserLocation(httpClient);
     useGeographic();
     dataFetcher.pointsEventData.subscribe((points) => {
       this.infoMap = new Map<String, any>();
-      this.points = points;
+      this.points = points[0];
+      this.noCoords = points[1];
+      console.log(this.noCoords);
       this.removePoints();
       this.points.forEach(point => {
         this.infoMap?.set(point.name, point);
@@ -109,7 +113,6 @@ export class AppComponent implements OnInit, AfterViewInit {
             normalColor = (normalBeds > 0)? 'green' : 'red'; 
             this.content.nativeElement.innerHTML = `
               <h1>${name}</h1>
-              <br/>
               <h2>📲: ${this.infoMap?.get(name).mobile}<h2/>
               <h3>
                 O2 beds: <span style="color: ${O2Color}">${O2Beds}</span><br/>
@@ -144,6 +147,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     let dialogRef = this.dialog.open(MenuComponent, {
       height: '300px',
       width: '400px',
+    });
+  }
+
+  openUnplotted(): void {
+    console.log("dfds")
+    let dialogRef = this.unplottedDialog.open(UnplottedComponent, {
+      height: '600px',
+      width: '700px',
+      data: this.noCoords
     });
   }
 

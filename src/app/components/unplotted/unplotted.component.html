@@ -1,0 +1,5 @@
+<h2>Unplotted centers</h2>
+<h3>These centers could not be plotted on the map as the TNeGA API is missing their coordinates.</h3>
+<div *ngFor="let item of data">
+    <app-unplotted-item [item]="item"></app-unplotted-item>
+</div>
