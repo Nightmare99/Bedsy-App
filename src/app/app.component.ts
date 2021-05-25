@@ -152,7 +152,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   openUnplotted(): void {
     console.log("dfds")
-    let dialogRef = this.unplottedDialog.open(UnplottedComponent, {
+    let dialogRef2 = this.unplottedDialog.open(UnplottedComponent, {
       height: '600px',
       width: '700px',
       data: this.noCoords
