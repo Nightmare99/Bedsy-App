@@ -14,6 +14,7 @@ import { Feature, Overlay } from 'ol';
 import Point from 'ol/geom/Point';
 import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
+import { findCentroid } from './util/centroid';
 
 @Component({
   selector: 'app-root',
@@ -52,8 +53,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.removePoints();
       this.points.forEach(point => {
         this.infoMap?.set(point.name, point);
-        this.addPoint(point.lon, point.lat, point.name);
+        if (point.lon != null && point.lat != null) this.addPoint(point.lon, point.lat, point.name);
       });
+      this.map.setView(new View({
+        center: findCentroid(this.points),
+        zoom: 14
+      }));
     });
   }
 
@@ -140,7 +145,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.overlay.setPosition(undefined);
           this.closer.nativeElement.blur();
       }
-  });
+    });
   }
 
   openMenu(): void {
