@@ -13,13 +13,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { UnplottedComponent } from './components/unplotted/unplotted.component';
 import { UnplottedItemComponent } from './components/unplotted-item/unplotted-item.component';
+import { WarningComponent } from './components/warning/warning.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MenuComponent,
     UnplottedComponent,
-    UnplottedItemComponent
+    UnplottedItemComponent,
+    WarningComponent
   ],
   imports: [
     BrowserModule,

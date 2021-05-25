@@ -15,6 +15,7 @@ import Point from 'ol/geom/Point';
 import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
 import { findCentroid } from './util/centroid';
+import { WarningComponent } from './components/warning/warning.component';
 
 @Component({
   selector: 'app-root',
@@ -68,6 +69,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.openMenu();
+    this.openWarning();
     this.loadMap();
   }
 
@@ -148,6 +150,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
+  openWarning(): void {
+    let dialogRef = this.dialog.open(WarningComponent, {
+      height: '400px',
+      width: '600px',
+    });
+  }
+
   openMenu(): void {
     let dialogRef = this.dialog.open(MenuComponent, {
       height: '300px',
@@ -157,7 +166,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   openUnplotted(): void {
     console.log("dfds")
-    let dialogRef2 = this.unplottedDialog.open(UnplottedComponent, {
+    let dialogRef = this.unplottedDialog.open(UnplottedComponent, {
       height: '600px',
       width: '700px',
       data: this.noCoords
